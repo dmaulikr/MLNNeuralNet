@@ -7,6 +7,14 @@
 //
 
 #import <XCTest/XCTest.h>
+#import "MLNNeuralNet.h"
+
+@interface MLNNeuralNet (test)
+
+-(NSMutableArray *)dotProduct2D:(NSArray *)array1 by:(NSArray *)array2;
+-(NSMutableArray *)transpose:(NSArray *)array;
+
+@end
 
 @interface MLNNeuralNetTests : XCTestCase
 
@@ -22,6 +30,21 @@
 - (void)tearDown {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
+}
+
+-(void)testMatrixDotProduct {
+    
+    NSMutableArray *array1 = [[NSMutableArray alloc] initWithArray:@[@[@(1), @(2), @(3)],
+                        @[@(4), @(5), @(6)]
+                        ]];
+    NSMutableArray *correctArray = [[NSMutableArray alloc] initWithArray:@[@[@(1), @(4)]
+                                                                           
+                                                                           
+                                                                           ]];
+    
+    //NSMutableArray *testArray = [self]
+    
+    
 }
 
 - (void)testExample {

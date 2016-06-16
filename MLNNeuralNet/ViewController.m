@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "MLNNeuralNet.h"
 
 @interface ViewController ()
+
+@property (strong, nonatomic) MLNNeuralNet *neuralNet;
 
 @end
 
@@ -17,11 +20,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    _neuralNet = [[MLNNeuralNet alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    
+    NSArray *training = @[@[@(0), @(0), @(1)],
+                          @[@(0), @(1), @(1)],
+                          @[@(1), @(0), @(1)],
+                          @[@(0), @(1), @(0)],
+                          @[@(1), @(0), @(0)],
+                          @[@(1), @(1), @(1)],
+                          @[@(0), @(0), @(0)]
+                          ];
+    
+    NSArray *trainingOutput = @[@(0), @(1), @(1), @(1), @(1), @(0), @(0)];
+    
+    //[self.neuralNet train:training trainingOutput:trainingOutput iterations:10];
+    //[self.neuralNet predict:@[@(0), @(1), @(0)]];
 }
 
 @end

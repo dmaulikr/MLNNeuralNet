@@ -15,6 +15,7 @@
 		F314DFF51D07C8E6006E7BCF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F314DFF31D07C8E6006E7BCF /* LaunchScreen.storyboard */; };
 		F314E0001D07C8E6006E7BCF /* MLNNeuralNetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F314DFFF1D07C8E6006E7BCF /* MLNNeuralNetTests.m */; };
 		F314E00B1D07C8E6006E7BCF /* MLNNeuralNetUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F314E00A1D07C8E6006E7BCF /* MLNNeuralNetUITests.m */; };
+		F314E01A1D07C901006E7BCF /* MLNNeuralNet.m in Sources */ = {isa = PBXBuildFile; fileRef = F314E0191D07C901006E7BCF /* MLNNeuralNet.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,8 @@
 		F314E0061D07C8E6006E7BCF /* MLNNeuralNetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MLNNeuralNetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F314E00A1D07C8E6006E7BCF /* MLNNeuralNetUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MLNNeuralNetUITests.m; sourceTree = "<group>"; };
 		F314E00C1D07C8E6006E7BCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F314E0181D07C901006E7BCF /* MLNNeuralNet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLNNeuralNet.h; sourceTree = "<group>"; };
+		F314E0191D07C901006E7BCF /* MLNNeuralNet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLNNeuralNet.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +106,8 @@
 			children = (
 				F314DFE81D07C8E6006E7BCF /* AppDelegate.h */,
 				F314DFE91D07C8E6006E7BCF /* AppDelegate.m */,
+				F314E0181D07C901006E7BCF /* MLNNeuralNet.h */,
+				F314E0191D07C901006E7BCF /* MLNNeuralNet.m */,
 				F314DFEB1D07C8E6006E7BCF /* ViewController.h */,
 				F314DFEC1D07C8E6006E7BCF /* ViewController.m */,
 				F314DFEE1D07C8E6006E7BCF /* Main.storyboard */,
@@ -272,6 +277,7 @@
 			files = (
 				F314DFED1D07C8E6006E7BCF /* ViewController.m in Sources */,
 				F314DFEA1D07C8E6006E7BCF /* AppDelegate.m in Sources */,
+				F314E01A1D07C901006E7BCF /* MLNNeuralNet.m in Sources */,
 				F314DFE71D07C8E6006E7BCF /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
