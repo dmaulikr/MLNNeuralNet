@@ -21,7 +21,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    _neuralNet = [[MLNNeuralNet alloc] init];
+    _neuralNet = [[MLNNeuralNet alloc] initWithInputs:3 hiddenSize:4];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -42,8 +42,8 @@
     
     NSArray *trainingOutput = @[@(0), @(1), @(1), @(1), @(1), @(0), @(0)];
     
-    //[self.neuralNet train:training trainingOutput:trainingOutput iterations:10];
-    //[self.neuralNet predict:@[@(0), @(1), @(0)]];
+    [self.neuralNet train:training trainingOutput:trainingOutput iterations:60000];
+    [self.neuralNet predict:@[@(0), @(1), @(0)]];
 }
 
 @end
