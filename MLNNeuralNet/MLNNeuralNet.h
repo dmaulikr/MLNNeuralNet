@@ -18,20 +18,25 @@
 -(NSNumber *)sigmoid:(NSNumber *)number;
 -(NSNumber *)derivative:(NSNumber *)number;
 
+//Saving and Loading Synaptic Weights
+-(void)saveSynapticWeights;
+-(void)loadSynapticWeights;
+
 //Vector and Matrix Math
 -(NSMutableArray *)sigmoidForVector:(NSArray *)values;
 -(NSMutableArray *)sigmoidForMatrix:(NSArray *)values;
--(NSMutableArray *)sigmoidDerivativeForVector:(NSArray *)values;
--(NSMutableArray *)sigmoidDerivativeForMatrix:(NSArray *)values;
+-(NSMutableArray *)derivativeForVector:(NSArray *)values;
+-(NSMutableArray *)derivativeForMatrix:(NSArray *)values;
 -(NSMutableArray *)addVector:(NSArray *)vector1 toVector:(NSArray *)vector2;
--(NSMutableArray *)multiplyVectorElements:(NSArray *)vector1 by:(NSArray *)vector2;
--(NSMutableArray *)dotProductMatrix:(NSArray *)matrix byVector:(NSArray *)vector;
 -(NSMutableArray *)addMatrix:(NSArray *)matrix1 toMatrix:(NSArray *)matrix2;
--(NSMutableArray *)outerProduct:(NSMutableArray *)array1 by:(NSMutableArray *)array2;
+-(NSMutableArray *)multiplyVectorElements:(NSArray *)vector1 by:(NSArray *)vector2;
+-(NSMutableArray *)multiplyMatrixElements:(NSArray *)array1 by:(NSArray *)array2;
 -(double)vectorDotProduct:(NSArray *)vector1 by:(NSArray *)vector2;
+-(NSMutableArray *)dotProductMatrix:(NSArray *)matrix byVector:(NSArray *)vector;
+-(NSMutableArray *)dotProduct:(NSArray *)array1 by:(NSArray *)array2;
+-(NSMutableArray *)outerProduct:(NSMutableArray *)array1 by:(NSMutableArray *)array2;
 
 //Neural Network Methods
--(NSMutableArray *)createLayerWithNeurons:(int)numberOfNeurons withInputs:(int)numberOfInputs;
 -(void)train:(NSArray *)inputs trainingOutput:(NSArray *)expectedOutput iterations:(int)iterations;
 -(void)predict:(NSArray *)testArray;
 

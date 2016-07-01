@@ -12,6 +12,7 @@
 @interface MLNNeuralNet (test)
 
 -(double)randomWeight;
+-(NSMutableArray *)createLayerWithNeurons:(int)numberOfNeurons withInputs:(int)numberOfInputs;
 
 @end
 
@@ -25,7 +26,7 @@
 
 - (void)setUp {
     [super setUp];
-    _neuralNet = [[MLNNeuralNet alloc] init];
+    _neuralNet = [[MLNNeuralNet alloc] initWithInputs:3 hiddenSize:4];
 }
 
 - (void)tearDown {
@@ -121,7 +122,7 @@
     
     NSMutableArray *before = [[NSMutableArray alloc] initWithArray:@[@(0.1), @(0.2), @(0.3)]];
     NSMutableArray *correctVector = [[NSMutableArray alloc] initWithArray:@[@(0.1 * (1.00 - 0.1)), @(0.2 * (1.00 - 0.2)), @(0.3 * (1.00 - 0.3))]];
-    NSMutableArray *testVector = [self.neuralNet sigmoidDerivativeForVector:before];
+    NSMutableArray *testVector = [self.neuralNet derivativeForVector:before];
     
     XCTAssertEqualObjects(correctVector, testVector, @"The vector did not convert to derivative correctly.");
 }
@@ -134,7 +135,7 @@
     NSMutableArray *slice1 = [[NSMutableArray alloc] initWithArray:@[@(0.1 * (1.00 - 0.1)), @(0.2 * (1.00 - 0.2)), @(0.3 * (1.00 - 0.3))]];
     NSMutableArray *slice2 = [[NSMutableArray alloc] initWithArray:@[@(0.4 * (1.00 - 0.4)), @(0.5 * (1.00 - 0.5)), @(0.6 * (1.00 - 0.6))]];
     NSMutableArray *correctMatrix = [[NSMutableArray alloc] initWithArray:@[slice1, slice2]];
-    NSMutableArray *testMatrix = [self.neuralNet sigmoidDerivativeForMatrix:beforeMatrix];
+    NSMutableArray *testMatrix = [self.neuralNet derivativeForMatrix:beforeMatrix];
     
     XCTAssertEqualObjects(correctMatrix, testMatrix, @"The matrix did not convert to derivative correctly.");
     
@@ -183,8 +184,17 @@
                                      initWithArray:@[layer1, layer2, layer3]];
     
     NSMutableArray *testMatrix = [self.neuralNet outerProduct:matrix1 by:matrix2];
-
-    XCTAssertEqualObjects(correctMatrix, testMatrix, @"Matrix outer product failed");
+    
+    for (int i = 0; i < [correctMatrix count]; i++) {
+        NSArray *slice1 = [correctMatrix objectAtIndex:i];
+        NSArray *slice2 = [testMatrix objectAtIndex:i];
+        for (int j = 0; j < [slice1 count]; j++) {
+            [self compareNumberWithPrecision:[slice1 objectAtIndex:j] to:[slice2 objectAtIndex:j]];
+            XCTAssertEqualWithAccuracy([[slice1 objectAtIndex:j] doubleValue],
+                                       [[slice1 objectAtIndex:j] doubleValue],
+                                       0.000000000000001, @"Matrix outer product failed");
+        }
+    }
 }
 
 -(void)testMatrixVectorProduct {
@@ -196,37 +206,83 @@
     NSMutableArray *correctMatrix = [[NSMutableArray alloc] initWithArray:@[@(14.6), @(20.6)]];
     NSMutableArray *testMatrix = [self.neuralNet dotProductMatrix:matrix byVector:vector];
     
-    XCTAssertEqualObjects(correctMatrix, testMatrix, @"The matrix-vector product calculation failed.");
+    for (int i = 0; i < [correctMatrix count]; i++) {
+        [self compareNumberWithPrecision:[correctMatrix objectAtIndex:i] to:[testMatrix objectAtIndex:i]];
+        XCTAssertEqualWithAccuracy([[correctMatrix objectAtIndex:i] doubleValue],
+                                       [[testMatrix objectAtIndex:i] doubleValue],
+                                       0.00000000000001, @"Matrix-vector product failed.");
+    }
+    
+    //XCTAssertEqualObjects(correctMatrix, testMatrix, @"The matrix-vector product calculation failed.");
     
 }
 
 -(void)testVectorDotProduct {
     
-    NSMutableArray *vector1 = [[NSMutableArray alloc] initWithArray:@[@(1.0), @(2.0), @(3.0)]];
-    NSMutableArray *vector2 = [[NSMutableArray alloc] initWithArray:@[@(4.0), @(5.0), @(6.0)]];
+    NSArray *vector1 = [[NSMutableArray alloc] initWithArray:@[@(1.0), @(2.0), @(3.0)]];
+    NSArray *vector2 = [[NSMutableArray alloc] initWithArray:@[@(4.0), @(5.0), @(6.0)]];
     NSMutableArray *throwTest = [[NSMutableArray alloc] initWithArray:@[@(7.0), @(8.0)]];
     double correctDotProduct = 32.0;
     double testDotProduct = [self.neuralNet vectorDotProduct:vector1 by:vector2];
     
-    XCTAssertEqual(correctDotProduct, testDotProduct, @"The vector dot product did not calculate correctly");
+    XCTAssertEqual(correctDotProduct, testDotProduct, @"The vector dot product did not calculate correctly.");
     
     XCTAssertThrows([self.neuralNet vectorDotProduct:vector1 by:throwTest]);
 }
 
-/*-(void)testMatrixDotProduct {
+-(void)testMatrixDotProduct {
     
-    NSMutableArray *array1 = [[NSMutableArray alloc] initWithArray:@[@[@(1), @(2), @(3)],
-                        @[@(4), @(5), @(6)]
-                        ]];
-    NSMutableArray *correctArray = [[NSMutableArray alloc] initWithArray:@[@[@(1), @(4)]
-                                                                           
-                                                                           
-                                                                           ]];
+    NSArray *matrix1 = @[@[@(1.0), @(2.0)],
+                        @[@(3.1), @(4.2)]];
+    NSArray *matrix2 = @[@[@(3.0), @(4.0)],
+                         @[@(5.1), @(6.2)]];
     
-    //NSMutableArray *testArray = [self]
+    NSArray *correctMatrix = @[@[@(13.2), @(16.4)],
+                                @[@(30.72), @(38.44)]
+                                ];
+    NSMutableArray *testMatrix = [self.neuralNet dotProduct:matrix1 by:matrix2];
     
-    
-}*/
+    for (int i = 0; i < [correctMatrix count]; i++) {
+        NSArray *slice1 = [correctMatrix objectAtIndex:i];
+        NSArray *slice2 = [testMatrix objectAtIndex:i];
+        for (int j = 0; j < [slice1 count]; j++) {
+            [self compareNumberWithPrecision:[slice1 objectAtIndex:j] to:[slice2 objectAtIndex:j]];
+            XCTAssertEqualWithAccuracy([[slice1 objectAtIndex:j] doubleValue],
+                                       [[slice1 objectAtIndex:j] doubleValue],
+                                       0.000000000000001, @"Matrix dot product failed.");
+        }
+    }
+}
 
+-(void)testMultiplyMatrixElements {
+    
+    NSArray *matrix1 = @[@[@(1.0), @(2.0)],
+                         @[@(3.1), @(4.2)]];
+    NSArray *matrix2 = @[@[@(3.0), @(4.0)],
+                         @[@(5.1), @(6.2)]];
+    
+    NSArray *correctMatrix = @[@[@(3.0), @(8.0)],
+                               @[@(15.81), @(26.04)]
+                               ];
+    
+    NSArray *testMatrix = [self.neuralNet multiplyMatrixElements:matrix1 by:matrix2];
+    
+    for (int i = 0; i < [correctMatrix count]; i++) {
+        NSArray *slice1 = [correctMatrix objectAtIndex:i];
+        NSArray *slice2 = [testMatrix objectAtIndex:i];
+        for (int j = 0; j < [slice1 count]; j++) {
+            [self compareNumberWithPrecision:[slice1 objectAtIndex:j] to:[slice2 objectAtIndex:j]];
+            XCTAssertEqualWithAccuracy([[slice1 objectAtIndex:j] doubleValue],
+                                       [[slice1 objectAtIndex:j] doubleValue],
+                                       0.000000000000001, @"Matrix dot product failed.");
+        }
+    }
+}
+
+#pragma mark - NSNumber Floating Point Inspection Helper
+
+-(void)compareNumberWithPrecision:(NSNumber *)number1 to:(NSNumber *)number2 {
+    NSLog(@"First Value: %.16lf Second Value:%.16lf", [number1 doubleValue], [number2 doubleValue]);
+}
 
 @end
