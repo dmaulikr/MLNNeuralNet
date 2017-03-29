@@ -5,46 +5,35 @@
 //  Created by Jason Dwyer on 6/7/16.
 //  Copyright © 2016 Jason Dwyer. All rights reserved.
 //
-/*  MLN is a multi-layer Artificial Neural Network developed in Objective-C. MLN can be used to accept a custom number of inputs and pass through a single custom hidden layer achitecture (# of neurons) to predict non-linear patterns in data and make predictions about new patterns. MLN was inspired, in part, by Milo Harper's ANN written in Python. Future releases will allow more customized hidden/output architectures and Recurrent Neural Network patterns. Note: All values contained within arrays should be doubles wrapped as NSNumber objects. Vectors are represented as an NSMutableArray of NSNumber objects. Matrices are represented as an NSMutableArray of NSMutableArrays containing NSNumber objects.*/
+//License: MIT
+//
+//This Version is Currently in Beta
+//
+/*  MLN is a multi-layer Artificial Neural Network library developed in Objective-C. MLN can be used to accept a custom number of inputs and pass through a single custom hidden layer achitecture (# of neurons) to predict non-linear patterns in data and make predictions about new patterns. MLN was inspired, in part, by Milo Harper's ANN written in Python (https://medium.com/technology-invention-and-more/how-to-build-a-multi-layered-neural-network-in-python-53ec3d1d326a 
+    
+    Note: All values contained within arrays should be doubles wrapped as NSNumber objects. Vectors are represented as an NSMutableArray of NSNumber objects. Matrices are represented as an NSMutableArray of NSMutableArrays containing NSNumber objects.*/
 
 #import "MLNNeuralNet.h"
 
 @interface MLNNeuralNet ()
 
 /*Synapses between input and hidden layer - will be initialized as a 2-D matrix (NSMutableArray of NSMutableArrays of synapse weight values wrapped in NSNumber objects*/
-@property (strong, nonatomic) NSMutableArray *wxh;
+@property (readwrite, strong, nonatomic) NSMutableArray *wxh;
 
 /*Synapses between hidden layer and output - initialized with vector of weights (NSMutableArray)*/
-@property (strong, nonatomic) NSMutableArray *why;
+@property (readwrite, strong, nonatomic) NSMutableArray *why;
 
 @end
 
 @implementation MLNNeuralNet
 
-#pragma mark - Initializer
+#pragma mark - Initializers
 
 -(instancetype)init {
     
     @throw [NSException exceptionWithName:@"Initializer Error"
-                                   reason:@"Please use the custom initializer initWithInputs:hiddenSize: to initialize a new MLN Network."
+                                   reason:@"Please use the custom initializer initWithInputs:hiddenSize: to initialize a new MLN Network. Alternatively, use the convenience initializer neuralNetWithInputs:"
                                  userInfo:nil];
-    
-    /*self = [super init];
-     
-     if (self) {
-     
-     _wxh = [self createLayerWithNeurons:5 withInputs:3];
-     
-     _why = [self createLayerWithNeurons:1 withInputs:5];
-     
-     _wxh = [[NSMutableArray alloc] initWithArray:@[@[@(-0.16595599), @(0.44064899), @(-0.99977125), @(-0.39533485)],
-     @[@(-0.70648822), @(-0.81532281), @(-0.62747958), @(-0.30887855)],
-     @[@(-0.20646505), @(0.07763347), @(-0.16161097), @(0.370439)]
-     ]];
-     _why = [[NSMutableArray alloc] initWithArray:@[@(-0.5910955), @(0.75623487), @(-0.94522481), @(0.34093502)]];
-     }
-     
-     return self;*/
 }
 
 -(instancetype)initWithInputs:(int)inputs hiddenSize:(int)hidden {
@@ -56,6 +45,12 @@
     }
     
     return self;
+}
+
++(instancetype)neuralNetWithInputs:(int)inputs {
+    /*Convenience Initializer*/
+    /*Returns a neural net with the given number of inputs and a hidden layer of inputs + 1*/
+    return [[self alloc] initWithInputs:inputs hiddenSize:inputs + 1];
 }
 
 #pragma mark - Neural Architecture
@@ -213,7 +208,6 @@
 -(void)loadSynapticWeights {
     
     /*Loads previously trained and saved synaptic weights*/
-    //Implementation example:
     self.wxh = [[NSUserDefaults standardUserDefaults] objectForKey:@"inputToHiddenWeights"];
     self.why = [[NSUserDefaults standardUserDefaults] objectForKey:@"hiddenToOutputWeights"];
 }

@@ -10,8 +10,15 @@
 
 @interface MLNNeuralNet : NSObject
 
-//initializer
+//Initializer
 -(instancetype)initWithInputs:(int)inputs hiddenSize:(int)hidden;
+
+//Convenience initializer
++(instancetype)neuralNetWithInputs:(int)inputs;
+
+//Accessing neural net layers readonly in public interface
+@property (readonly) NSMutableArray *wxh;
+@property (readonly) NSMutableArray *why;
 
 //Helpers
 -(NSMutableArray *)transpose:(NSArray *)array;
