@@ -13,6 +13,9 @@
 
 @property (strong, nonatomic) MLNNeuralNet *neuralNet;
 
+@property (strong, nonatomic) UILabel *trainButton;
+@property BOOL isTraining;
+
 @end
 
 @implementation ViewController
@@ -21,7 +24,33 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    //Initialize a neural net
     _neuralNet = [[MLNNeuralNet alloc] initWithInputs:3 hiddenSize:4];
+    
+    
+    //Description label
+    UILabel *description =[[UILabel alloc] init];
+    description.frame = CGRectMake(self.view.frame.size.width * 0.1, self.view.frame.size.height * 0.1, self.view.frame.size.width * 0.8, self.view.frame.size.height * 0.3);
+    description.numberOfLines = 0;
+    description.text = @"This is a simple example that trains a two-layer neural net to learn a XOR gate at the first two inputs. Press train to start and view results in the console.";
+    [self.view addSubview:description];
+    
+    //Create a button to start training
+    _trainButton = [[UILabel alloc] initWithFrame:CGRectMake(self.view.frame.size.width * 0.1, self.view.frame.size.height * 0.4, self.view.frame.size.width * 0.8, self.view.frame.size.height * 0.05)];
+    self.trainButton.backgroundColor = [UIColor blueColor];
+    self.trainButton.textColor = [UIColor whiteColor];
+    self.trainButton.font = [UIFont boldSystemFontOfSize:22];
+    self.trainButton.text = @"Train";
+    self.trainButton.textAlignment = NSTextAlignmentCenter;
+    self.trainButton.userInteractionEnabled = YES;
+    self.trainButton.layer.cornerRadius = 4;
+    self.trainButton.layer.masksToBounds = YES;
+    self.trainButton.layer.borderColor = [UIColor blackColor].CGColor;
+    [self.view addSubview:self.trainButton];
+    
+    UITapGestureRecognizer *train = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(start)];
+    [self.trainButton addGestureRecognizer:train];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,32 +58,39 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+-(void)start {
     
-    /*Here we override touchesBegan to initiate the neural net training and prediction*/
-    
-    /*Create a matrix of inputs for demo purpose
-     This example tests if the neural net can learn the XOR gate in the first 2 inputs
-     */
-    NSArray *training = @[@[@(0), @(0), @(1)],
-                          @[@(0), @(1), @(1)],
-                          @[@(1), @(0), @(1)],
-                          @[@(0), @(1), @(0)],
-                          @[@(1), @(0), @(0)],
-                          @[@(1), @(1), @(1)],
-                          @[@(0), @(0), @(0)]
-                          ];
-    
-    //Create output for demo purposes
-    NSArray *trainingOutput = @[@(0), @(1), @(1), @(1), @(1), @(0), @(0)];
-    
-    
-    MLNNeuralNet *newNet = [MLNNeuralNet neuralNetWithInputs:4];
-    NSLog(@"Inputs: %lu", (unsigned long)[newNet.wxh count]);
-    NSLog(@"Hidden: %lu", (unsigned long)[newNet.why count]);
-    
-    [self.neuralNet train:training trainingOutput:trainingOutput iterations:60000];
-    [self.neuralNet predict:@[@(0), @(1), @(0)]];
+    if (self.isTraining) {
+        return;
+    }
+    else {
+        self.isTraining = YES;
+        NSArray *training = @[@[@(0), @(0), @(1)],
+                              @[@(0), @(1), @(1)],
+                              @[@(1), @(0), @(1)],
+                              @[@(0), @(1), @(0)],
+                              @[@(1), @(0), @(0)],
+                              @[@(1), @(1), @(1)],
+                              @[@(0), @(0), @(0)]
+                              ];
+        
+        //Create output for demo purposes
+        NSArray *trainingOutput = @[@(0), @(1), @(1), @(1), @(1), @(0), @(0)];
+        
+        
+        //Train the network asynchronously
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSLog(@"Training neural net...");
+            [self.neuralNet train:training trainingOutput:trainingOutput iterations:10000];
+            self.isTraining = NO;
+            
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                NSLog(@"Predicting from input...");
+                [self.neuralNet predict:@[@(0), @(1), @(0)]];
+            });
+        });
+    }
+
 }
 
 @end

@@ -191,7 +191,7 @@
     
     double dotProduct = [self vectorDotProduct:sigmoid_layer_1 by:self.why];
     double sigmoid = 1.00 / (1.00 + (exp(-dotProduct)));
-    NSLog(@"Answer: %f", dotProduct);
+    //NSLog(@"Answer: %f", dotProduct);
     NSLog(@"Sigmoid answer: %f", sigmoid);
     
 }
